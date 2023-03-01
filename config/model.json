@@ -1,0 +1,109 @@
+{
+  "$schema": "https://docs.xentara.io/xentara/schema-xentara-model.json",
+  "children": [
+    {
+      "@Microservice.Sample.Microservice":
+      {
+        "id": "Microservice",
+        "uuid": "d4fe161b-a256-401a-bb9c-87d4383950d3",
+        "left": "Inputs.Left",
+        "right": "Inputs.Right",
+        "setpoint": "Outputs.Setpoint",
+        "safe": "Outputs.Safe"
+      }
+    },
+    {
+      "@Track": {
+        "id": "Track",
+        "uuid": "af86d74e-316e-4a21-a272-e8d1f4845277",
+        "threadCount": 1,
+        "timers": [
+          {
+            "referenceTime": 0,
+            "period": 100000,
+            "pipeline": {
+              "checkPoints": [
+                {},
+                {}
+              ],
+              "segments": [
+                {
+                  "start": 0,
+                  "end": 1,
+                  "tasks": [
+                    {
+                      "function": "Inputs.generate"
+                    },
+                    {
+                      "function": "Microservice.execute"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@IOComponent.SignalGenerator.Sampler": {
+        "id": "Inputs",
+        "uuid": "5bead748-a3d8-457d-b677-91f9b0c4a73f",
+        "children": [
+          {
+            "@IO.SignalGenerator.Signal": {
+              "id": "Left",
+              "uuid": "000270ff-59b3-4a8f-acb4-8f7f63b1d1bd",
+              "dataType": "float64",
+              "top": 100,
+              "bottom": -100,
+              "waveForm": {
+                "@SineWave": {
+                  "period": 15000000,
+                  "phaseOffset": 0
+                }
+              }
+            }
+          },
+          {
+            "@IO.SignalGenerator.Signal": {
+              "id": "Right",
+              "uuid": "5f65ca1d-8630-4caa-aef8-a9c5b788e6fd",
+              "dataType": "float64",
+              "top": 100,
+              "bottom": -100,
+              "waveForm": {
+                "@SineWave": {
+                  "period": 15000000,
+                  "phaseOffset": 2000000
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@IOComponent.SignalFlow.RegisterBlock": {
+        "id": "Outputs",
+        "uuid": "9c0055bd-4740-4920-a2cb-72c76d3f352f",
+        "children": [
+          {
+            "@IO.SignalFlow.Register": {
+              "id": "Setpoint",
+              "uuid": "10d0a980-3b78-448a-a6ad-7da193abb70f",
+              "defaultValue": [ "float64", 0 ]
+            }
+          },
+          {
+            "@IO.SignalFlow.Register": {
+              "id": "Safe",
+              "uuid": "613c4d25-d2da-46ec-bac3-cad8b0d8afe7",
+              "defaultValue": [ "bool", true ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
