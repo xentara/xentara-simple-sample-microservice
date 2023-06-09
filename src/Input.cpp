@@ -8,13 +8,13 @@
 #include <functional>
 #include <stdexcept>
 
-namespace xentara::plugins::sampleMicroservice
+namespace xentara::samples::simpleMicroservice
 {
 
 auto Input::loadConfig(utils::json::decoder::Value &value, config::Resolver &resolver) -> void
 {
 	// Just submit a request
-	resolver.submit<model::GenericElement>(value, std::ref(_element));
+	resolver.submit<model::Element>(value, std::ref(_element));
 }
 
 auto Input::prepare() -> void
@@ -37,7 +37,7 @@ auto Input::prepare() -> void
 	}
 }
 
-auto Input::readHandle(const model::GenericElement &element, std::string_view attributeName) -> data::ReadHandle
+auto Input::readHandle(const model::Element &element, std::string_view attributeName) -> data::ReadHandle
 {
 	// Get the handle
 	auto handle = element.attributeReadHandle(attributeName);
@@ -85,4 +85,4 @@ auto Input::handleReadError(std::error_code error) -> void
 	throw std::system_error(error, utils::string::cat("could not read ", elementName()));
 }
 
-} // namespace xentara::plugins::sampleMicroservice
+} // namespace xentara::samples::simpleMicroservice

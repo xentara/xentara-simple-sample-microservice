@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.25)
 
 project(xentara-simple-sample-microservice
 	VERSION 1.0.0
@@ -25,16 +25,20 @@ add_library(
 
 	"src/Attributes.cpp"
 	"src/Attributes.hpp"
+	"src/Events.cpp"
+	"src/Events.hpp"
 	"src/Input.cpp"
 	"src/Input.hpp"
 	"src/Output.cpp"
 	"src/Output.hpp"
 	"src/Plugin.cpp"
 	"src/Plugin.hpp"
-	"src/ServiceProvider.cpp"
-	"src/ServiceProvider.hpp"
 	"src/SampleMicroservice.cpp"
 	"src/SampleMicroservice.hpp"
+	"src/Skill.cpp"
+	"src/Skill.hpp"
+	"src/Tasks.cpp"
+	"src/Tasks.hpp"
 )
 
 # Link against the Xentara utility and plugin libraries

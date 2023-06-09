@@ -6,11 +6,10 @@
 #include "Output.hpp"
 
 #include <xentara/memory/Array.hpp>
-#include <xentara/plugin/EnableSharedFromThis.hpp>
 #include <xentara/process/Event.hpp>
-#include <xentara/process/Microservice.hpp>
-#include <xentara/process/MicroserviceClass.hpp>
 #include <xentara/process/Task.hpp>
+#include <xentara/skill/Element.hpp>
+#include <xentara/skill/EnableSharedFromThis.hpp>
 #include <xentara/utils/core/Uuid.hpp>
 
 #include <functional>
@@ -19,7 +18,7 @@
 #include <optional>
 #include <new>
 
-namespace xentara::plugins::sampleMicroservice
+namespace xentara::samples::simpleMicroservice
 {
 
 using namespace std::literals;
@@ -27,11 +26,11 @@ using namespace std::literals;
 class TemplateClient;
 
 // A class representing a sample microservice.
-class SampleMicroservice final : public process::Microservice, public plugin::EnableSharedFromThis<SampleMicroservice>
+class SampleMicroservice final : public skill::Element, public skill::EnableSharedFromThis<SampleMicroservice>
 {
 public:
 	// The class object containing meta-information about this element type
-	class Class final : public process::MicroserviceClass
+	class Class final : public skill::Element::Class
 	{
 	public:
 		// Gets the global object
@@ -41,7 +40,7 @@ public:
 		}
 
 		///////////////////////////////////////////////////////
-		// Virtual overrides for process::MicroserviceClass
+		// Virtual overrides for skill::Element::Class
 
 		auto name() const -> std::string_view final
 		{
@@ -62,15 +61,15 @@ public:
 	};
 
 	///////////////////////////////////////////////////////
-	// Virtual overrides for process::Microservice
+	// Virtual overrides for skill::Element
 
-	auto resolveAttribute(std::string_view name) -> const model::Attribute * final;
+	auto forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool final;
 
-	auto resolveTask(std::string_view name) -> std::shared_ptr<process::Task> final;
+	auto forEachEvent(const model::ForEachEventFunction &function) -> bool final;
 
-	auto resolveEvent(std::string_view name) -> std::shared_ptr<process::Event> final;
+	auto forEachTask(const model::ForEachTaskFunction &function) -> bool final;
 
-	auto readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle final;
+	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
 
 	auto realize() -> void final;
 
@@ -78,12 +77,12 @@ public:
 
 protected:
 	///////////////////////////////////////////////////////
-	// Virtual overrides for process::Microservice
+	// Virtual overrides for skill::Element
 
 	auto loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void final;
+		const config::FallbackHandler &fallbackHandler) -> void final;
 
 private:
 	// The error message for a microservice that has not been executed yet
@@ -168,4 +167,4 @@ private:
 	Output _safe;
 };
 
-} // namespace xentara::plugins::sampleMicroservice
+} // namespace xentara::samples::simpleMicroservice

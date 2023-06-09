@@ -2,13 +2,19 @@
 #include "SampleMicroservice.hpp"
 
 #include "Attributes.hpp"
+#include "Events.hpp"
+#include "Tasks.hpp"
 
+#include <xentara/config/FallbackHandler.hpp>
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
 #include <xentara/data/WriteHandle.hpp>
 #include <xentara/memory/memoryResources.hpp>
 #include <xentara/memory/WriteSentinel.hpp>
 #include <xentara/model/Attribute.hpp>
+#include <xentara/model/ForEachAttributeFunction.hpp>
+#include <xentara/model/ForEachEventFunction.hpp>
+#include <xentara/model/ForEachTaskFunction.hpp>
 #include <xentara/process/ExecutionContext.hpp>
 #include <xentara/utils/json/decoder/Object.hpp>
 #include <xentara/utils/json/decoder/Errors.hpp>
@@ -17,7 +23,7 @@
 #include <concepts>
 #include <algorithm>
 
-namespace xentara::plugins::sampleMicroservice
+namespace xentara::samples::simpleMicroservice
 {
 	
 using namespace std::literals;
@@ -30,7 +36,7 @@ const std::string_view SampleMicroservice::kSuspendedError = "the microservice i
 auto SampleMicroservice::loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void
+		const config::FallbackHandler &fallbackHandler) -> void
 {
 	// Keep track of which inpouts/outputs have been loaded
 	bool leftLoaded = false;
@@ -185,40 +191,30 @@ auto SampleMicroservice::updateState(
 	}
 }
 
-auto SampleMicroservice::resolveAttribute(std::string_view name) -> const model::Attribute *
+auto SampleMicroservice::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
 {
-	return model::Attribute::resolve(name,
-		attributes::kExecutionState,
-		attributes::kExecutionTime,
-		attributes::kError);
+	// Handle all the attributes we support
+	return
+		function(attributes::kExecutionState) ||
+		function(attributes::kExecutionTime) ||
+		function(attributes::kError);
 }
 
-auto SampleMicroservice::resolveTask(std::string_view name) -> std::shared_ptr<process::Task>
+auto SampleMicroservice::forEachEvent(const model::ForEachEventFunction &function) -> bool
 {
-	if (name == "execute"sv)
-	{
-		return std::shared_ptr<process::Task>(sharedFromThis(), &_executeTask);
-	}
-
-	return nullptr;
+	// Handle all the events we support
+	return
+		function(events::kExecuted, sharedFromThis(&_executedEvent)) ||
+		function(events::kError, sharedFromThis(&_errorEvent));
 }
 
-auto SampleMicroservice::resolveEvent(std::string_view name) -> std::shared_ptr<process::Event>
+auto SampleMicroservice::forEachTask(const model::ForEachTaskFunction &function) -> bool
 {
-	// Check all the events we support
-	if (name == "executed"sv)
-	{
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_executedEvent);
-	}
-	else if (name == "error"sv)
-	{
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_errorEvent);
-	}
-
-	return nullptr;
+	// We only have the "execute" task
+	return function(tasks::kExecute, sharedFromThis(&_executeTask));
 }
 
-auto SampleMicroservice::readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle
+auto SampleMicroservice::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
 {
 	// Try our attributes
 	if (attribute == attributes::kExecutionState)
@@ -234,7 +230,7 @@ auto SampleMicroservice::readHandle(const model::Attribute &attribute) const noe
 		return _stateDataBlock.member(&State::_error);
 	}
 
-	return data::ReadHandle::Error::Unknown;
+	return std::nullopt;
 }
 
 auto SampleMicroservice::realize() -> void
@@ -269,4 +265,4 @@ auto SampleMicroservice::ExecuteTask::preparePostOperational(const process::Exec
 	return Status::Completed;
 }
 
-} // namespace xentara::plugins::sampleMicroservice
+} // namespace xentara::samples::simpleMicroservice

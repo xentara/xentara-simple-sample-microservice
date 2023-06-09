@@ -1,11 +1,11 @@
 // Copyright (c) embedded ocean GmbH
 #pragma once
 
-#include "ServiceProvider.hpp"
+#include "Skill.hpp"
 
 #include <xentara/plugin/Plugin.hpp>
 
-namespace xentara::plugins::sampleMicroservice
+namespace xentara::samples::simpleMicroservice
 {
 
 // The class that registers the library as a Xentara plugin.
@@ -15,18 +15,18 @@ public:
 	///////////////////////////////////////////////////////
 	// Virtual overrides for plugin::Plugin
 
-	auto registerObjects(Registry & registry) -> void final
+	auto registerSkills(Registry & registry) -> void final
 	{
-		// Register the service provider object.
-		registry << _serviceProvider;
+		// Register the skill class.
+		registry << _skillClass;
 	}
 	
 private:
-	// The service provider object
-	ServiceProvider _serviceProvider;
+	// The skill class
+	Skill::Class _skillClass;
 
 	// The global plugin object
 	static Plugin _instance;
 };
 
-} // namespace xentara::plugins::sampleMicroservice
+} // namespace xentara::samples::simpleMicroservice

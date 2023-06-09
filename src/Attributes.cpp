@@ -6,7 +6,7 @@
 
 #include <string_view>
 
-namespace xentara::plugins::sampleMicroservice::attributes
+namespace xentara::samples::simpleMicroservice::attributes
 {
 
 using namespace std::literals;
@@ -15,4 +15,4 @@ const model::Attribute kExecutionState { "8270cec1-050b-499c-b03f-6bcc41dad49e"_
 const model::Attribute kExecutionTime { "8270cec1-050b-499c-b03f-6bcc41dad49e"_uuid, "executionTime"sv, model::Attribute::Access::ReadOnly, data::DataType::kTimeStamp };
 const model::Attribute kError { model::Attribute::kError, model::Attribute::Access::ReadOnly, data::DataType::kString };
 
-} // namespace xentara::plugins::sampleMicroservice::attributes
+} // namespace xentara::samples::simpleMicroservice::attributes

@@ -3,14 +3,14 @@
 
 #include <xentara/config/Resolver.hpp>
 #include <xentara/data/ReadHandle.hpp>
-#include <xentara/model/GenericElement.hpp>
+#include <xentara/model/Element.hpp>
 #include <xentara/utils/json/decoder/Value.hpp>
 
 #include <memory>
 #include <string>
 #include <string_view>
 
-namespace xentara::plugins::sampleMicroservice
+namespace xentara::samples::simpleMicroservice
 {
 
 // A single input of the microservice
@@ -29,7 +29,7 @@ public:
 
 private:
 	// Gets a read handle
-	auto readHandle(const model::GenericElement &element, std::string_view attributeName) -> data::ReadHandle;
+	auto readHandle(const model::Element &element, std::string_view attributeName) -> data::ReadHandle;
 
 	// Gets a name for the element for use in error messages
 	auto elementName() const -> std::string;
@@ -40,7 +40,7 @@ private:
 	[[noreturn]] auto handleReadError(std::error_code error) -> void;
 
 	// The element
-	std::weak_ptr<model::GenericElement> _element;
+	std::weak_ptr<model::Element> _element;
 
 	// The read handle for the quality
 	data::ReadHandle _quality;
@@ -65,4 +65,4 @@ auto Input::read() -> Type
 	return std::move(*value);
 }
 
-} // namespace xentara::plugins::sampleMicroservice
+} // namespace xentara::samples::simpleMicroservice
