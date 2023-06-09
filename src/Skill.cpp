@@ -10,9 +10,9 @@ namespace xentara::samples::simpleMicroservice
 auto Skill::createElement(const skill::Element::Class &elementClass, skill::ElementFactory &factory)
 	-> std::shared_ptr<skill::Element>
 {
-	if (&elementClass == &SampleMicroservice::Class::instance())
+	if (&elementClass == &Instance::Class::instance())
 	{
-		return factory.makeShared<SampleMicroservice>();
+		return factory.makeShared<Instance>();
 	}
 
 	return nullptr;

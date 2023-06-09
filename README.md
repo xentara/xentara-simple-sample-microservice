@@ -13,26 +13,26 @@ This microservice reads two inputs, and write the bigger one back to an output. 
 it is not running correctly.
 
 ## Xentara Elements
-This driver one a [microservice](https://docs.xentara.io/xentara/xentara_microservices.html) with model file descriptor
-`@IOComponent.Sample.Microservice`.
+This microservice supplies a [skill element](https://docs.xentara.io/xentara/xentara_skills.html#xentara_skill_elements) with model file descriptor
+`@Skill.SimpleSampleMicroservice.Instance`.
 
 The class can be found in the following files:
 
-- [src/SampleMicroservice.hpp](src/SampleMicroservice.hpp)
-- [src/SampleMicroservice.cpp](src/SampleMicroservice.cpp)
+- [src/Instance.hpp](src/Instance.hpp)
+- [src/Instance.cpp](src/Instance.cpp)
 
-The *SampleMicroservice* class publishes the following [attribute](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_attributes):
+The *Instance* class publishes the following [attribute](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_attributes):
 
 - `executionState` contains *true* or *false*, depending on whether the microservice is currently running correctly or not.
 - `executionTime` contains the last time the microservice was executed.
 - `error` contains the error message if `executionState` is *false*.
 
-The *SampleMicroservice* class published the following [events](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
+The *Instance* class published the following [events](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
 
 - `executed` is triggered whenever the microservice was executed correctly
 - `error` is triggered whenever an error occurs executing the microservice. This event is also triggered when the microservice is suspended.
 
-The *SampleMicroservice* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
+The *Instance* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
 
 - `execute` executes the microservice.
 

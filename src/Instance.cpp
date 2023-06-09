@@ -1,5 +1,5 @@
 // Copyright (c) embedded ocean GmbH
-#include "SampleMicroservice.hpp"
+#include "Instance.hpp"
 
 #include "Attributes.hpp"
 #include "Events.hpp"
@@ -28,12 +28,12 @@ namespace xentara::samples::simpleMicroservice
 	
 using namespace std::literals;
 
-SampleMicroservice::Class SampleMicroservice::Class::_instance;
+Instance::Class Instance::Class::_instance;
 
-const std::string_view SampleMicroservice::kPendingError = "the microservice has not been executed yet"sv;
-const std::string_view SampleMicroservice::kSuspendedError = "the microservice is suspended"sv;
+const std::string_view Instance::kPendingError = "the microservice instance has not been executed yet"sv;
+const std::string_view Instance::kSuspendedError = "the microservice instance is suspended"sv;
 
-auto SampleMicroservice::loadConfig(const ConfigIntializer &initializer,
+auto Instance::loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
 		const config::FallbackHandler &fallbackHandler) -> void
@@ -78,23 +78,23 @@ auto SampleMicroservice::loadConfig(const ConfigIntializer &initializer,
 	// Check that ell inputs have been loaded
 	if (!leftLoaded)
 	{
-		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no left input specified for sample microservice"));
+		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no left input specified for simple sample microservice instance"));
 	}
 	if (!rightLoaded)
 	{
-		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no right input specified for sample microservice"));
+		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no right input specified for simple sample microservice instance"));
 	}
 	if (!setpointLoaded)
 	{
-		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no setpoint output specified for sample microservice"));
+		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no setpoint output specified for simple sample microservice instance"));
 	}
 	if (!safeLoaded)
 	{
-		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no safe output specified for sample microservice"));
+		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("no safe output specified for simple sample microservice instance"));
 	}
 }
 
-auto SampleMicroservice::performExecuteTask(const process::ExecutionContext &context) -> void
+auto Instance::performExecuteTask(const process::ExecutionContext &context) -> void
 {
 	// Get the time stamp
 	const auto timeStamp = context.scheduledTime();
@@ -113,13 +113,13 @@ auto SampleMicroservice::performExecuteTask(const process::ExecutionContext &con
 	}
 }
 
-auto SampleMicroservice::prePerformExecuteTask(const process::ExecutionContext &context) -> void
+auto Instance::prePerformExecuteTask(const process::ExecutionContext &context) -> void
 {
 	// We are now pending
 	updateState(context.scheduledTime(), kPendingError);
 }
 
-auto SampleMicroservice::postPerformExecuteTask(const process::ExecutionContext &context) -> void
+auto Instance::postPerformExecuteTask(const process::ExecutionContext &context) -> void
 {
 	// Get the time stamp
 	const auto timeStamp = context.scheduledTime();
@@ -137,7 +137,7 @@ auto SampleMicroservice::postPerformExecuteTask(const process::ExecutionContext 
 	updateState(timeStamp, kSuspendedError);
 }
 
-auto SampleMicroservice::execute(std::chrono::system_clock::time_point timeStamp) -> void
+auto Instance::execute(std::chrono::system_clock::time_point timeStamp) -> void
 {
 	try
 	{
@@ -159,13 +159,13 @@ auto SampleMicroservice::execute(std::chrono::system_clock::time_point timeStamp
 	}
 }
 
-auto SampleMicroservice::safe(std::chrono::system_clock::time_point timeStamp) -> std::error_code
+auto Instance::safe(std::chrono::system_clock::time_point timeStamp) -> std::error_code
 {
 	// Set the safe state
 	return _safe.write(true, std::nothrow);
 }
 
-auto SampleMicroservice::updateState(
+auto Instance::updateState(
 	std::chrono::system_clock::time_point timeStamp, std::optional<std::string_view> error) -> void
 {
 	// Make a write sentinel
@@ -191,7 +191,7 @@ auto SampleMicroservice::updateState(
 	}
 }
 
-auto SampleMicroservice::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
+auto Instance::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
 {
 	// Handle all the attributes we support
 	return
@@ -200,7 +200,7 @@ auto SampleMicroservice::forEachAttribute(const model::ForEachAttributeFunction 
 		function(attributes::kError);
 }
 
-auto SampleMicroservice::forEachEvent(const model::ForEachEventFunction &function) -> bool
+auto Instance::forEachEvent(const model::ForEachEventFunction &function) -> bool
 {
 	// Handle all the events we support
 	return
@@ -208,13 +208,13 @@ auto SampleMicroservice::forEachEvent(const model::ForEachEventFunction &functio
 		function(events::kError, sharedFromThis(&_errorEvent));
 }
 
-auto SampleMicroservice::forEachTask(const model::ForEachTaskFunction &function) -> bool
+auto Instance::forEachTask(const model::ForEachTaskFunction &function) -> bool
 {
 	// We only have the "execute" task
 	return function(tasks::kExecute, sharedFromThis(&_executeTask));
 }
 
-auto SampleMicroservice::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
+auto Instance::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
 {
 	// Try our attributes
 	if (attribute == attributes::kExecutionState)
@@ -233,13 +233,13 @@ auto SampleMicroservice::makeReadHandle(const model::Attribute &attribute) const
 	return std::nullopt;
 }
 
-auto SampleMicroservice::realize() -> void
+auto Instance::realize() -> void
 {
 	// Create the data block
 	_stateDataBlock.create(memory::memoryResources::data());
 }
 
-auto SampleMicroservice::prepare() -> void
+auto Instance::prepare() -> void
 {
 	// Prepare all the inputs and outputs
 	_left.prepare();
@@ -248,18 +248,18 @@ auto SampleMicroservice::prepare() -> void
 	_safe.prepare();
 }
 
-auto SampleMicroservice::ExecuteTask::preparePreOperational(const process::ExecutionContext &context) -> Status
+auto Instance::ExecuteTask::preparePreOperational(const process::ExecutionContext &context) -> Status
 {
 	_target.get().prePerformExecuteTask(context);
 	return Status::Completed;
 }
 
-auto SampleMicroservice::ExecuteTask::operational(const process::ExecutionContext &context) -> void
+auto Instance::ExecuteTask::operational(const process::ExecutionContext &context) -> void
 {
 	_target.get().performExecuteTask(context);
 }
 
-auto SampleMicroservice::ExecuteTask::preparePostOperational(const process::ExecutionContext &context) -> Status
+auto Instance::ExecuteTask::preparePostOperational(const process::ExecutionContext &context) -> Status
 {
 	_target.get().postPerformExecuteTask(context);
 	return Status::Completed;

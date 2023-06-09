@@ -26,7 +26,7 @@ using namespace std::literals;
 class TemplateClient;
 
 // A class representing a sample microservice.
-class SampleMicroservice final : public skill::Element, public skill::EnableSharedFromThis<SampleMicroservice>
+class Instance final : public skill::Element, public skill::EnableSharedFromThis<Instance>
 {
 public:
 	// The class object containing meta-information about this element type
@@ -45,7 +45,7 @@ public:
 		auto name() const -> std::string_view final
 		{
 			// This is the name of the microservice class, as it appears in the model.json file
-			return "Microservice"sv;
+			return "Instance"sv;
 		}
 
 		auto uuid() const -> utils::core::Uuid final
@@ -106,7 +106,7 @@ private:
 	{
 	public:
 		// This constuctor attached the task to its target
-		ExecuteTask(std::reference_wrapper<SampleMicroservice> target) : _target(target)
+		ExecuteTask(std::reference_wrapper<Instance> target) : _target(target)
 		{
 		}
 
@@ -126,7 +126,7 @@ private:
 
 	private:
 		// A reference to the microservice
-		std::reference_wrapper<SampleMicroservice> _target;
+		std::reference_wrapper<Instance> _target;
 	};
 
 	// This function is called by the "execute" task on startup.

@@ -1,7 +1,7 @@
 // Copyright (c) embedded ocean GmbH
 #pragma once
 
-#include "SampleMicroservice.hpp"
+#include "Instance.hpp"
 
 #include <xentara/skill/Skill.hpp>
 #include <xentara/utils/core/Uuid.hpp>
@@ -27,7 +27,7 @@ public:
 		auto name() const -> std::string_view final
 		{
 			// This is the name of the service provider, as it appears in the model.json file
-			return "Sample"sv;
+			return "SimpleSampleMicroservice"sv;
 		}
 
 		auto uuid() const -> utils::core::Uuid final
@@ -39,7 +39,7 @@ public:
 		auto registerElements(Registry &registry) -> void final
 		{
 			// Register the object class of the microservice
-			registry << SampleMicroservice::Class::instance();
+			registry << Instance::Class::instance();
 		}
 
 		auto createSkill() -> std::unique_ptr<skill::Skill> final
