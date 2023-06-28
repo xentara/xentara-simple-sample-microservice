@@ -144,9 +144,9 @@ private:
 	// Updates the state
 	auto updateState(std::chrono::system_clock::time_point timeStamp, std::optional<std::string_view> error = std::nullopt) -> void;
 
-	// A Xentara event that is fired when the microservice has been executed successfully
+	// A Xentara event that is raised when the microservice has been executed successfully
 	process::Event _executedEvent;
-	// A Xentara event that is fired when an error occurred executing the microservice
+	// A Xentara event that is raised when an error occurred executing the microservice
 	process::Event _executionErrorEvent;
 
 	// The "execute" task

@@ -29,8 +29,8 @@ The *Instance* class publishes the following [attribute](https://docs.xentara.io
 
 The *Instance* class published the following [events](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
 
-- `executed` is triggered whenever the microservice was executed correctly
-- `executionError` is triggered whenever an error occurs executing the microservice. This event is also triggered when the microservice is suspended.
+- `executed` is raised whenever the microservice was executed correctly
+- `executionError` is raised whenever an error occurs executing the microservice. This event is also raised when the microservice is suspended.
 
 The *Instance* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
 
