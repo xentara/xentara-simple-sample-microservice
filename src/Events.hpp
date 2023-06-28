@@ -9,6 +9,6 @@ namespace xentara::samples::simpleMicroservice::events
 // A Xentara event that is fired when the microservice was executed correctly
 extern const process::Event::Role kExecuted;
 // A Xentara event that is fired an error occurs executing the microservice
-extern const process::Event::Role kError;
+extern const process::Event::Role kExecutionError;
 
 } // namespace xentara::samples::simpleMicroservice::events

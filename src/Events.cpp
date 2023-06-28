@@ -13,6 +13,6 @@ using namespace xentara::literals;
 
 const process::Event::Role kExecuted { "47d0e52c-98e2-44ad-a63a-c90799b8b6ce"_uuid, "executed"sv };
 
-const process::Event::Role kError { "5fc3a10f-460e-4319-a692-f1d3bb649b87"_uuid, "error"sv };
+const process::Event::Role kExecutionError { "5fc3a10f-460e-4319-a692-f1d3bb649b87"_uuid, "executionError"sv };
 
 } // namespace xentara::samples::simpleMicroservice::events

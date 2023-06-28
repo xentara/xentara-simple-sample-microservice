@@ -15,6 +15,7 @@
 #include <xentara/model/ForEachAttributeFunction.hpp>
 #include <xentara/model/ForEachEventFunction.hpp>
 #include <xentara/model/ForEachTaskFunction.hpp>
+#include <xentara/process/EventList.hpp>
 #include <xentara/process/ExecutionContext.hpp>
 #include <xentara/utils/json/decoder/Object.hpp>
 #include <xentara/utils/json/decoder/Errors.hpp>
@@ -177,18 +178,10 @@ auto Instance::updateState(
 	state._executionTime = timeStamp;
 	state._error = std::string(error.value_or(""sv));
 
-	// Commit the data
-	sentinel.commit();
-
-	// Fire the correct event
-	if (error)
-	{
-		_errorEvent.fire();
-	}
-	else
-	{
-		_executedEvent.fire();
-	}
+	// Determine the correct event
+	const auto &event = error ? _executionErrorEvent : _executedEvent;
+	// Commit the data and raise the event
+	sentinel.commit(timeStamp, event);
 }
 
 auto Instance::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
@@ -205,7 +198,7 @@ auto Instance::forEachEvent(const model::ForEachEventFunction &function) -> bool
 	// Handle all the events we support
 	return
 		function(events::kExecuted, sharedFromThis(&_executedEvent)) ||
-		function(events::kError, sharedFromThis(&_errorEvent));
+		function(events::kExecutionError, sharedFromThis(&_executionErrorEvent));
 }
 
 auto Instance::forEachTask(const model::ForEachTaskFunction &function) -> bool
