@@ -14,11 +14,11 @@ namespace xentara::samples::simpleMicroservice
 {
 
 // A single input of the microservice
-class Input
+class Input final
 {
 public:
 	// Loads the input from a configuration value
-	auto loadConfig(utils::json::decoder::Value &value, config::Resolver &resolver) -> void;
+	auto load(utils::json::decoder::Value &value, config::Resolver &resolver) -> void;
 
 	// Prepares the input
 	auto prepare() -> void;

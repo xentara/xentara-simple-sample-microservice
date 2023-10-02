@@ -30,35 +30,12 @@ class Instance final : public skill::Element, public skill::EnableSharedFromThis
 {
 public:
 	// The class object containing meta-information about this element type
-	class Class final : public skill::Element::Class
-	{
-	public:
-		// Gets the global object
-		static auto instance() -> Class &
-		{
-			return _instance;
-		}
-
-		///////////////////////////////////////////////////////
-		// Virtual overrides for skill::Element::Class
-
-		auto name() const -> std::string_view final
-		{
-			// This is the name of the microservice class, as it appears in the model.json file
-			return "Instance"sv;
-		}
-
-		auto uuid() const -> utils::core::Uuid final
-		{
-			// This is an arbitrary unique UUID for the microservice class. This can be anything, but should never
-			// change.
-			return "fc5da59c-028f-49d0-b73d-38637957d376"_uuid;
-		}
-
-	private:
-		// The global object that represents the class
-		static Class _instance;
-	};
+	using Class = ConcreteClass<
+		// This is the name of the microservice class, as it appears in the model.json file
+		"Instance",
+		// This is an arbitrary unique UUID for the microservice class. This can be anything, but should never
+		// change.
+		"fc5da59c-028f-49d0-b73d-38637957d376"_uuid>;
 
 	///////////////////////////////////////////////////////
 	// Virtual overrides for skill::Element
@@ -79,8 +56,7 @@ protected:
 	///////////////////////////////////////////////////////
 	// Virtual overrides for skill::Element
 
-	auto loadConfig(const ConfigIntializer &initializer,
-		utils::json::decoder::Object &jsonObject,
+	auto load(utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
 		const config::FallbackHandler &fallbackHandler) -> void final;
 

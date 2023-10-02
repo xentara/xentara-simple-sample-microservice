@@ -7,6 +7,8 @@
 namespace xentara::samples::simpleMicroservice
 {
 
+Skill::Class Skill::_class;
+
 auto Skill::createElement(const skill::Element::Class &elementClass, skill::ElementFactory &factory)
 	-> std::shared_ptr<skill::Element>
 {

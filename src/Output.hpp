@@ -14,22 +14,22 @@ namespace xentara::samples::simpleMicroservice
 {
 
 // A single output of the microservice
-class Output
+class Output final
 {
 public:
 	// Loads the output from a configuration value
-	auto loadConfig(utils::json::decoder::Value &value, config::Resolver &resolver) -> void;
+	auto load(utils::json::decoder::Value &value, config::Resolver &resolver) -> void;
 
 	// Prepares the output
 	auto prepare() -> void;
 
 	// Writes the value as a certain type. Throws an exception on error.
 	template <typename Type>
-	auto write(const Type &value) -> void;
+	auto write(Type &&value) -> void;
 
 	// Writes the value as a certain type without throwing any errors.
 	template <typename Type>
-	auto write(const Type &value, std::nothrow_t) -> std::error_code;
+	auto write(Type &&value, std::nothrow_t) -> std::error_code;
 
 private:
 	// Gets a write handle
@@ -49,10 +49,10 @@ private:
 };
 
 template <typename Type>
-auto Output::write(const Type &value) -> void
+auto Output::write(Type &&value) -> void
 {
 	// Try to read the value
-	const auto error = _value.write<Type>(value);
+	const auto error = _value.write(std::forward<Type>(value));
 	// Handles errors
 	if (error)
 	{
@@ -61,9 +61,9 @@ auto Output::write(const Type &value) -> void
 }
 
 template <typename Type>
-auto Output::write(const Type &value, std::nothrow_t) -> std::error_code
+auto Output::write(Type &&value, std::nothrow_t) -> std::error_code
 {
-	return _value.write<Type>(value);
+	return _value.write(std::forward<Type>(value));
 }
 
 } // namespace xentara::samples::simpleMicroservice

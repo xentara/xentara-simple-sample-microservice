@@ -29,15 +29,12 @@ namespace xentara::samples::simpleMicroservice
 	
 using namespace std::literals;
 
-Instance::Class Instance::Class::_instance;
-
 const std::string_view Instance::kPendingError = "the microservice instance has not been executed yet"sv;
 const std::string_view Instance::kSuspendedError = "the microservice instance is suspended"sv;
 
-auto Instance::loadConfig(const ConfigIntializer &initializer,
-		utils::json::decoder::Object &jsonObject,
-		config::Resolver &resolver,
-		const config::FallbackHandler &fallbackHandler) -> void
+auto Instance::load(utils::json::decoder::Object &jsonObject,
+	config::Resolver &resolver,
+	const config::FallbackHandler &fallbackHandler) -> void
 {
 	// Keep track of which inpouts/outputs have been loaded
 	bool leftLoaded = false;
@@ -50,22 +47,22 @@ auto Instance::loadConfig(const ConfigIntializer &initializer,
     {
 		if (name == "left")
 		{
-			_left.loadConfig(value, resolver);
+			_left.load(value, resolver);
 			leftLoaded = true;
 		}
 		else if (name == "right")
 		{
-			_right.loadConfig(value, resolver);
+			_right.load(value, resolver);
 			rightLoaded = true;
 		}
 		else if (name == "setpoint")
 		{
-			_setpoint.loadConfig(value, resolver);
+			_setpoint.load(value, resolver);
 			setpointLoaded = true;
 		}
 		else if (name == "safe")
 		{
-			_safe.loadConfig(value, resolver);
+			_safe.load(value, resolver);
 			safeLoaded = true;
 		}
 		else
