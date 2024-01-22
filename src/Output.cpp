@@ -13,10 +13,10 @@ using namespace std::literals;
 namespace xentara::samples::simpleMicroservice
 {
 
-auto Output::load(utils::json::decoder::Value &value, config::Resolver &resolver) -> void
+auto Output::load(utils::json::decoder::Value &value, config::Context &context) -> void
 {
 	// Just submit a request
-	resolver.submit<model::Element>(value, std::ref(_element));
+	context.resolve<model::Element>(value, std::ref(_element));
 }
 
 auto Output::prepare() -> void

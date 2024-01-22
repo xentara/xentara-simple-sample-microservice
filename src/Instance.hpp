@@ -55,14 +55,6 @@ public:
 
 	auto prepare() -> void final;
 
-protected:
-	///////////////////////////////////////////////////////
-	// Virtual overrides for skill::Element
-
-	auto load(utils::json::decoder::Object &jsonObject,
-		config::Resolver &resolver,
-		const config::FallbackHandler &fallbackHandler) -> void final;
-
 private:
 	// The error message for a microservice that has not been executed yet
 	static const std::string_view kPendingError;
@@ -122,6 +114,11 @@ private:
 
 	// Updates the state
 	auto updateState(std::chrono::system_clock::time_point timeStamp, std::optional<std::string_view> error = std::nullopt) -> void;
+
+	///////////////////////////////////////////////////////
+	// Virtual overrides for skill::Element
+
+	auto load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void final;
 
 	// A Xentara event that is raised when the microservice has been executed successfully
 	process::Event _executedEvent;

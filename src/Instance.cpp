@@ -5,7 +5,7 @@
 #include "Events.hpp"
 #include "Tasks.hpp"
 
-#include <xentara/config/FallbackHandler.hpp>
+#include <xentara/config/Errors.hpp>
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
 #include <xentara/data/WriteHandle.hpp>
@@ -33,11 +33,9 @@ using namespace std::literals;
 const std::string_view Instance::kPendingError = "the microservice instance has not been executed yet"sv;
 const std::string_view Instance::kSuspendedError = "the microservice instance is suspended"sv;
 
-auto Instance::load(utils::json::decoder::Object &jsonObject,
-	config::Resolver &resolver,
-	const config::FallbackHandler &fallbackHandler) -> void
+auto Instance::load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void
 {
-	// Keep track of which inpouts/outputs have been loaded
+	// Keep track of which inputs/outputs have been loaded
 	bool leftLoaded = false;
 	bool rightLoaded = false;
 	bool setpointLoaded = false;
@@ -48,29 +46,27 @@ auto Instance::load(utils::json::decoder::Object &jsonObject,
     {
 		if (name == "left")
 		{
-			_left.load(value, resolver);
+			_left.load(value, context);
 			leftLoaded = true;
 		}
 		else if (name == "right")
 		{
-			_right.load(value, resolver);
+			_right.load(value, context);
 			rightLoaded = true;
 		}
 		else if (name == "setpoint")
 		{
-			_setpoint.load(value, resolver);
+			_setpoint.load(value, context);
 			setpointLoaded = true;
 		}
 		else if (name == "safe")
 		{
-			_safe.load(value, resolver);
+			_safe.load(value, context);
 			safeLoaded = true;
 		}
 		else
 		{
-			// Pass any unknown parameters on to the fallback handler, which will load the built-in parameters ("id", "uuid", and "children"),
-			// and throw an exception if the key is unknown
-            fallbackHandler(name, value);
+            config::throwUnknownParameterError(name);
 		}
     }
 

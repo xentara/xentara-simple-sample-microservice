@@ -11,10 +11,10 @@
 namespace xentara::samples::simpleMicroservice
 {
 
-auto Input::load(utils::json::decoder::Value &value, config::Resolver &resolver) -> void
+auto Input::load(utils::json::decoder::Value &value, config::Context &context) -> void
 {
 	// Just submit a request
-	resolver.submit<model::Element>(value, std::ref(_element));
+	context.resolve<model::Element>(value, std::ref(_element));
 }
 
 auto Input::prepare() -> void

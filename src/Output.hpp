@@ -1,7 +1,7 @@
 // Copyright (c) embedded ocean GmbH
 #pragma once
 
-#include <xentara/config/Resolver.hpp>
+#include <xentara/config/Context.hpp>
 #include <xentara/data/WriteHandle.hpp>
 #include <xentara/model/Element.hpp>
 #include <xentara/utils/json/decoder/Value.hpp>
@@ -18,7 +18,7 @@ class Output final
 {
 public:
 	// Loads the output from a configuration value
-	auto load(utils::json::decoder::Value &value, config::Resolver &resolver) -> void;
+	auto load(utils::json::decoder::Value &value, config::Context &context) -> void;
 
 	// Prepares the output
 	auto prepare() -> void;
