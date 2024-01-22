@@ -35,7 +35,10 @@ public:
 		"Instance",
 		// This is an arbitrary unique UUID for the microservice class. This can be anything, but should never
 		// change.
-		"fc5da59c-028f-49d0-b73d-38637957d376"_uuid>;
+		"fc5da59c-028f-49d0-b73d-38637957d376"_uuid,
+		// This is a human readable name for the element class.
+		// NOTE: The display name must be understandable event without knowing the skill it belongs to.
+		"simple sample microservice">;
 
 	///////////////////////////////////////////////////////
 	// Virtual overrides for skill::Element
