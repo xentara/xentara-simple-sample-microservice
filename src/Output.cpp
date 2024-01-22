@@ -3,8 +3,8 @@
 
 #include <xentara/data/Quality.hpp>
 #include <xentara/model/Attribute.hpp>
-#include <xentara/utils/string/cat.hpp>
 
+#include <format>
 #include <functional>
 #include <stdexcept>
 
@@ -34,7 +34,7 @@ auto Output::prepare() -> void
 	// Make sure the value is not read only
 	if (_value == data::WriteHandle::Error::ReadOnly)
 	{
-		throw std::runtime_error(utils::string::cat("the value of element \"", element->primaryKey(), "\" is read only"));
+		throw std::runtime_error(std::format(R"(the value of element "{}" is read only )", *element));
 	}
 }
 
@@ -45,7 +45,8 @@ auto Output::writeHandle(model::Element &element, std::string_view attributeName
 	// Check that it exists
 	if (handle == data::WriteHandle::Error::Unknown)
 	{
-		throw std::runtime_error(utils::string::cat("the element \"", element.primaryKey(), "\" does not have an attribute named \"", attributeName, '"'));
+		throw std::runtime_error(
+			std::format(R"(the element "{}" does not have an attribute named "{}")", element, attributeName));
 	}
 
 	return handle;
@@ -65,7 +66,7 @@ auto Output::elementName() const -> std::string
 
 auto Output::handleWriteError(std::error_code error) -> void
 {
-	throw std::system_error(error, utils::string::cat("could not write ", elementName()));
+	throw std::system_error(error, std::format("could not write {}", elementName()));
 }
 
 } // namespace xentara::samples::simpleMicroservice

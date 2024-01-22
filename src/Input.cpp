@@ -3,8 +3,8 @@
 
 #include <xentara/data/Quality.hpp>
 #include <xentara/model/Attribute.hpp>
-#include <xentara/utils/string/cat.hpp>
 
+#include <format>
 #include <functional>
 #include <stdexcept>
 
@@ -33,7 +33,7 @@ auto Input::prepare() -> void
 	// Make sure the value is not write only
 	if (_value == data::ReadHandle::Error::WriteOnly)
 	{
-		throw std::runtime_error(utils::string::cat("the value of element \"", element->primaryKey(), "\" is write only"));
+		throw std::runtime_error(std::format(R"(the value of element "{}" is write only )", *element));
 	}
 }
 
@@ -44,7 +44,8 @@ auto Input::readHandle(const model::Element &element, std::string_view attribute
 	// Check that it exists
 	if (handle == data::ReadHandle::Error::Unknown)
 	{
-		throw std::runtime_error(utils::string::cat("the element \"", element.primaryKey(), "\" does not have an attribute named \"", attributeName, '"'));
+		throw std::runtime_error(
+			std::format(R"(the element "{}" does not have an attribute named "{}")", element, attributeName));
 	}
 
 	return handle;
@@ -70,19 +71,19 @@ auto Input::checkQuality() -> void
 	auto quality = _quality.read<data::Quality>();
 	if (!quality)
 	{
-		throw std::system_error(quality.error(), utils::string::cat("could not read quality of ", elementName()));
+		throw std::system_error(quality.error(), std::format("could not read quality of {}", elementName()));
 	}
 
 	// Check it
 	if (*quality > data::Quality::Acceptable)
 	{
-		throw std::runtime_error(utils::string::cat("quality of ", elementName(), " is ", toString(*quality)));
+		throw std::runtime_error(std::format("quality of {} is {}", elementName(), *quality));
 	}
 }
 
 auto Input::handleReadError(std::error_code error) -> void
 {
-	throw std::system_error(error, utils::string::cat("could not read ", elementName()));
+	throw std::system_error(error, std::format("could not read {}", elementName()));
 }
 
 } // namespace xentara::samples::simpleMicroservice

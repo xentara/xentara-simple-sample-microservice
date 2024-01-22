@@ -21,8 +21,9 @@
 #include <xentara/utils/json/decoder/Errors.hpp>
 #include <xentara/utils/eh/currentErrorCode.hpp>
 
-#include <concepts>
 #include <algorithm>
+#include <concepts>
+#include <format>
 
 namespace xentara::samples::simpleMicroservice
 {
@@ -127,7 +128,7 @@ auto Instance::postPerformExecuteTask(const process::ExecutionContext &context) 
 	// Check for errors
 	if (error)
 	{
-		updateState(timeStamp, utils::string::cat("could not safe state: ", error.message()));
+		updateState(timeStamp, std::format("could not save state: {}", error.message()));
 		return;
 	}
 
