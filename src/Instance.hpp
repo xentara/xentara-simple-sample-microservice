@@ -6,6 +6,7 @@
 #include "Output.hpp"
 
 #include <xentara/memory/Array.hpp>
+#include <xentara/model/ElementCategory.hpp>
 #include <xentara/process/Event.hpp>
 #include <xentara/process/Task.hpp>
 #include <xentara/skill/Element.hpp>
@@ -51,9 +52,10 @@ public:
 
 	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
 
-	auto realize() -> void final;
-
-	auto prepare() -> void final;
+	auto category() const noexcept -> model::ElementCategory final
+	{
+		return model::ElementCategory::Microservice;
+	}
 
 private:
 	// The error message for a microservice that has not been executed yet
@@ -119,6 +121,10 @@ private:
 	// Virtual overrides for skill::Element
 
 	auto load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void final;
+
+	auto realize() -> void final;
+
+	auto prepare() -> void final;
 
 	// A Xentara event that is raised when the microservice has been executed successfully
 	process::Event _executedEvent;
