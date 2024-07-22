@@ -31,6 +31,7 @@ namespace xentara::samples::simpleMicroservice
 using namespace std::literals;
 
 const std::string_view Instance::kPendingError = "the microservice instance has not been executed yet"sv;
+const std::string_view Instance::kSuspendingError = "the microservice instance is in the process of being suspended"sv;
 const std::string_view Instance::kSuspendedError = "the microservice instance is suspended"sv;
 
 auto Instance::load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void
@@ -129,21 +130,58 @@ auto Instance::postPerformExecuteTask(const process::ExecutionContext &context) 
 	}
 
 	// We are now suspended
-	updateState(timeStamp, kSuspendedError);
+	updateState(timeStamp, kSuspendingError);
+}
+
+auto Instance::checkPostPerformExecuteTask(const process::ExecutionContext &context) -> process::Task::Status
+{
+	// Get the time stamp
+	const auto timeStamp = context.scheduledTime();
+
+	try
+	{
+		// See if we are safe
+		if (isSafe())
+		{
+			updateState(timeStamp, kSuspendedError);
+			return process::Task::Status::Completed;
+		}
+
+		return process::Task::Status::Pending;
+	}
+	catch (const std::exception &exception)
+	{
+		// Set the error status
+		updateState(timeStamp, std::format("could not save state: {}", exception.what()));
+		// If we cannot determine the state, then we just give up, as there is no point in waiting any longer
+		return process::Task::Status::Completed;
+	}
+	catch (...)
+	{
+		// Set the error status
+		updateState(timeStamp, "could not save state");
+		// If we cannot determine the state, then we just give up, as there is no point in waiting any longer
+		return process::Task::Status::Completed;
+	}
 }
 
 auto Instance::execute(std::chrono::system_clock::time_point timeStamp) -> void
 {
 	try
 	{
+		// See if we are in the safe mode
+		if (isSafe())
+		{
+			// Remove the safety
+			_safe.write(false);
+		}
+
 		// Read the inputs
 		const auto left = _left.read<double>();
 		const auto right = _right.read<double>();
 
 		// Use the maximum as the set point
 		_setpoint.write(std::max(left, right));
-		// Remove the safety
-		_safe.write(false);
 	}
 	catch (...)
 	{
@@ -158,6 +196,11 @@ auto Instance::safe(std::chrono::system_clock::time_point timeStamp) -> std::err
 {
 	// Set the safe state
 	return _safe.write(true, std::nothrow);
+}
+
+auto Instance::isSafe() -> bool
+{
+	return _isSafe.read<bool>();
 }
 
 auto Instance::updateState(

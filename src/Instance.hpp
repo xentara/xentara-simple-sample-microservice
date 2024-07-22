@@ -60,6 +60,8 @@ public:
 private:
 	// The error message for a microservice that has not been executed yet
 	static const std::string_view kPendingError;
+	// The error message for a microservice that is in the process of being suspended
+	static const std::string_view kSuspendingError;
 	// The error message for a microservice that is suspended
 	static const std::string_view kSuspendedError;
 
@@ -108,11 +110,16 @@ private:
 	auto performExecuteTask(const process::ExecutionContext &context) -> void;
 	// This function is called by the "execute" task on shutdown.
 	auto postPerformExecuteTask(const process::ExecutionContext &context) -> void;
+	// This function determines if the shutdown or suspend of the "execute" task has completed.
+	auto checkPostPerformExecuteTask(const process::ExecutionContext &context) -> process::Task::Status;
 
 	// Executes the microservice. Throws an exception on error
 	auto execute(std::chrono::system_clock::time_point timeStamp) -> void;
 	// Safes the state. Returns an error on error.
 	auto safe(std::chrono::system_clock::time_point timeStamp) -> std::error_code;
+
+	// Checks whether the state is safe
+	auto isSafe() -> bool;
 
 	// Updates the state
 	auto updateState(std::chrono::system_clock::time_point timeStamp, std::optional<std::string_view> error = std::nullopt) -> void;
@@ -147,6 +154,9 @@ private:
 	// Some random outputs
 	Output _setpoint;
 	Output _safe;
+
+	// The input that tells us whether we are safe
+	Input _isSafe;
 };
 
 } // namespace xentara::samples::simpleMicroservice
